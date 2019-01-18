@@ -2,83 +2,87 @@ module.exports = function (grunt) {
 
 	grunt.initConfig({
 		nunjucks: {
-		options: {
-			data: grunt.file.readJSON('data.json'),
-			paths: ['src/templates', 'src/templates/layouts']
-		},
-		render: {
-			files: [{
-			expand: true,
-			cwd: 'src/templates/pages',
-			src: [
-				'**/*.njk',
-				'!**/_*.njk'
-			],
-			dest: './',
-			ext: '.html'
-			}]
-		}
+			options: {
+				data: grunt.file.readJSON('data.json'),
+				paths: ['src/templates', 'src/templates/layouts']
+			},
+			render: {
+				files: [{
+				expand: true,
+				cwd: 'src/templates/pages',
+				src: [
+					'**/*.njk',
+					'!**/_*.njk'
+				],
+				dest: './',
+				ext: '.html'
+				}]
+			}
 		},
 		sass: {
-		dist: {
-			options: {
-			style: 'expanded',
-			sourcemap: 'none'
-			},
-			files: {
-			'css/style.css': 'src/scss/style.scss'
+			dist: {
+				options: {
+				style: 'expanded',
+				sourcemap: 'none'
+				},
+				files: {
+				'css/style.css': 'src/scss/style.scss'
+				}
 			}
-		}
 		},
 		postcss: {
-		options: {
-			processors: [
-			require('autoprefixer')({
-				browsers: '> 1% in US'
-			}),
-			// require('cssnano')()
-			]
-		},
-		dist: {
-			src: 'css/*.css'
-		}
+			options: {
+				processors: [
+				require('autoprefixer')({
+					browsers: '> 1% in US'
+				}),
+				// require('cssnano')()
+				]
+			},
+			dist: {
+				src: 'css/*.css'
+			}
 		},
 		prettify: {
-		options: {
-			indent: 4
-		},
-		all: {
-			expand: true,
-			cwd: './',
-			ext: '.html',
-			src: ['*.html'],
-			dest: './'
-		}
+			options: {
+				indent: 4
+			},
+			all: {
+				expand: true,
+				cwd: './',
+				ext: '.html',
+				src: ['*.html'],
+				dest: './'
+			}
 		},
 		watch: {
-		dev: {
-			files: [
-			'src/scss/**/*.scss',
-			'src/templates/**/*.html',
-			'src/templates/**/*.njk',
-			'data.json'
-			],
-			tasks: ['sass', 'postcss', 'nunjucks', 'prettify']
-		},
+			dev: {
+				files: [
+				'src/scss/**/*.scss',
+				'src/templates/**/*.html',
+				'src/templates/**/*.njk',
+				'data.json'
+				],
+				tasks: ['sass', 'postcss', 'nunjucks', 'prettify']
+			},
 		},
 		browserSync: {
-		dev: {
-			bsFiles: {
-			src: [
-				'./**/*.html',
-				'./css/**/*.css'
-			]
-			},
-			options: {
-			watchTask: true,
-			proxy: 'bonvoyage.loc'
+			dev: {
+				bsFiles: {
+					src: [
+						'./**/*.html',
+						'./css/**/*.css'
+					]
+				},
+				options: {
+					watchTask: true,
+					proxy: 'bonvoyage.loc'
+				},
+				// server: {
+				// 	baseDir: "./",
+				// 	directory: true
+				// }
 			}
-		}
 		}
 	});
 
@@ -92,6 +96,7 @@ module.exports = function (grunt) {
 	// grunt.loadNpmTasks('grunt-exec');
 
 	grunt.registerTask('css', ['sass', 'postcss']);
-	grunt.registerTask('build', ['css', 'nunjucks', 'prettify']);
+	grunt.registerTask('html', ['nunjucks', 'prettify']);
+	grunt.registerTask('build', ['css', 'html']);
 	grunt.registerTask('default', ['browserSync', 'watch']);
 }
