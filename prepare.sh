@@ -3,7 +3,7 @@ case ${answer:0:1} in
     y|Y )
         echo '\n👏 Okay. Running commands...\n'
         echo -e '\nInstalling node modules...\n-------'
-        npm install
+        yarn install
         echo -e '\nRemoving git references...\n-------'
         rm -rf .git
         echo -e '\nFinal cleanup: removing last files...\n-------'
