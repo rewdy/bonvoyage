@@ -33,9 +33,7 @@ module.exports = function (grunt) {
 		postcss: {
 			options: {
 				processors: [
-				require('autoprefixer')({
-					browsers: '> 1% in US'
-				}),
+				require('autoprefixer')(),
 				// require('cssnano')()
 				]
 			},
