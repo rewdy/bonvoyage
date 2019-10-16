@@ -8,33 +8,34 @@ module.exports = function (grunt) {
 			},
 			render: {
 				files: [{
-				expand: true,
-				cwd: 'src/templates/pages',
-				src: [
-					'**/*.njk',
-					'!**/_*.njk'
-				],
-				dest: './',
-				ext: '.html'
+					expand: true,
+					cwd: 'src/templates/pages',
+					src: [
+						'**/*.njk',
+						'!**/_*.njk'
+					],
+					dest: './',
+					ext: '.html'
 				}]
 			}
 		},
 		sass: {
 			dist: {
 				options: {
-				style: 'expanded',
-				sourcemap: 'none'
+					style: 'expanded',
+					sourcemap: 'none'
 				},
 				files: {
-				'css/style.css': 'src/scss/style.scss'
+					'css/style.css': 'src/scss/style.scss'
 				}
 			}
 		},
 		postcss: {
 			options: {
 				processors: [
-				require('autoprefixer')(),
-				// require('cssnano')()
+					require('autoprefixer')(),
+					require('postcss-combine-duplicated-selectors')(),
+					require('cssnano')(),
 				]
 			},
 			dist: {
@@ -56,10 +57,10 @@ module.exports = function (grunt) {
 		watch: {
 			dev: {
 				files: [
-				'src/scss/**/*.scss',
-				'src/templates/**/*.html',
-				'src/templates/**/*.njk',
-				'data.json'
+					'src/scss/**/*.scss',
+					'src/templates/**/*.html',
+					'src/templates/**/*.njk',
+					'data.json'
 				],
 				tasks: ['sass', 'postcss', 'nunjucks', 'prettify']
 			},
@@ -74,12 +75,12 @@ module.exports = function (grunt) {
 				},
 				options: {
 					watchTask: true,
-					proxy: 'bonvoyage.loc'
+					// proxy: 'bonvoyage.loc'
+					server: {
+						baseDir: "./",
+						directory: true
+					}
 				},
-				// server: {
-				// 	baseDir: "./",
-				// 	directory: true
-				// }
 			}
 		}
 	});
@@ -90,8 +91,6 @@ module.exports = function (grunt) {
 	grunt.loadNpmTasks('grunt-prettify');
 	grunt.loadNpmTasks('grunt-browser-sync');
 	grunt.loadNpmTasks('grunt-contrib-watch');
-	// grunt.loadNpmTasks('grunt-contrib-copy');
-	// grunt.loadNpmTasks('grunt-exec');
 
 	grunt.registerTask('css', ['sass', 'postcss']);
 	grunt.registerTask('html', ['nunjucks', 'prettify']);
