@@ -1,4 +1,5 @@
 module.exports = function (grunt) {
+	const sass = require('dart-sass');
 
 	grunt.initConfig({
 		nunjucks: {
@@ -22,6 +23,7 @@ module.exports = function (grunt) {
 		sass: {
 			dist: {
 				options: {
+					implementation: sass,
 					style: 'expanded',
 					sourcemap: 'none'
 				},
@@ -85,7 +87,7 @@ module.exports = function (grunt) {
 		}
 	});
 
-	grunt.loadNpmTasks('grunt-contrib-sass');
+	grunt.loadNpmTasks('grunt-sass');
 	grunt.loadNpmTasks('grunt-postcss');
 	grunt.loadNpmTasks('grunt-nunjucks-2-html');
 	grunt.loadNpmTasks('grunt-prettify');
