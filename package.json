@@ -9,13 +9,15 @@
     "html": "grunt html",
     "css": "grunt css",
     "build": "grunt build",
-    "eject": "node _scripts/clean.js"
+    "postinstall": "node _scripts/postinstall.js",
+    "fresh-start": "node _scripts/clean.js"
   },
   "devDependencies": {
     "@lodder/grunt-postcss": "^3.1.1",
     "autoprefixer": "^9.0.0",
     "cssnano": "^5.0.17",
     "dot-json": "^1.2.2",
+    "gitconfig": "^2.0.8",
     "grunt": "^1.4.1",
     "grunt-browser-sync": "^2.2.0",
     "grunt-contrib-copy": "^1.0.0",
