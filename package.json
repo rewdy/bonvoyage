@@ -8,20 +8,25 @@
     "watch": "grunt watch",
     "html": "grunt html",
     "css": "grunt css",
-    "build": "grunt build"
+    "build": "grunt build",
+    "eject": "node _scripts/clean.js"
   },
   "devDependencies": {
-    "autoprefixer": "^9.4.2",
-    "cssnano": "^4.1.7",
-    "dart-sass": "^1.25.0",
-    "grunt": "^1.0.3",
+    "@lodder/grunt-postcss": "^3.1.1",
+    "autoprefixer": "^9.0.0",
+    "cssnano": "^5.0.17",
+    "dot-json": "^1.2.2",
+    "grunt": "^1.4.1",
     "grunt-browser-sync": "^2.2.0",
+    "grunt-contrib-copy": "^1.0.0",
     "grunt-contrib-watch": "^1.1.0",
     "grunt-nunjucks-2-html": "^2.2.0",
-    "grunt-postcss": "^0.9.0",
     "grunt-prettify": "^0.4.0",
     "grunt-sass": "^3.1.0",
-    "postcss-combine-duplicated-selectors": "^8.0.2"
+    "inquirer": "^8.2.0",
+    "postcss": "^8.4.6",
+    "rimraf": "^3.0.2",
+    "sass": "^1.49.7"
   },
   "author": "Andrew Meyer",
   "license": "ISC"
