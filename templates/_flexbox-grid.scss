@@ -1,0 +1,224 @@
+@use "sass:math";
+@use "sass:list";
+
+// Set the number of columns you want to use on your layout.
+$bon-fb-grid-grid-columns: 12 !default;
+// Set the gutter between columns.
+$bon-fb-grid-gutter-width: 1rem !default;
+// Set a margin for the container sides.
+$bon-fb-grid-outer-margin: 2rem !default;
+
+// Create or remove breakpoints for your project
+// Syntax:
+// name SIZErem,
+$bon-fb-grid-breakpoints:
+  sm 48em 46rem,
+  md 62em 61rem,
+  lg 75em 71rem !default;
+$bon-fb-grid-max-width: 1200px !default;
+
+@mixin _bon-fb-grid-col-common($gutter-width) {
+  box-sizing: border-box;
+
+  flex-grow: 0;
+  flex-shrink: 0;
+
+  padding-right: $gutter-width;
+  padding-left: $gutter-width;
+}
+
+/**
+ * Flexbox Grid
+ * A responsive flexbox grid system.
+ */
+@mixin bon-flexbox-grid(
+  $grid-columns: $bon-fb-grid-grid-columns,
+  $gutter-width: $bon-fb-grid-gutter-width,
+  $outer-margin: $bon-fb-grid-outer-margin,
+  $breakpoints: $bon-fb-grid-breakpoints,
+  $max-width: $bon-fb-grid-max-width
+) {
+  $gutter-compensation: $gutter-width * 0.5 * -1;
+  $half-gutter-width: $gutter-width * 0.5;
+
+  .wrapper {
+    box-sizing: border-box;
+    max-width: $max-width;
+    margin: 0 auto;
+  }
+
+  .container-fluid {
+    margin-right: auto;
+    margin-left: auto;
+    padding-right: $outer-margin;
+    padding-left: $outer-margin;
+  }
+
+  .row {
+    box-sizing: border-box;
+    display: flex;
+    flex: 0 1 auto;
+    flex-direction: row;
+    flex-wrap: wrap;
+    margin-right: $gutter-compensation;
+    margin-left: $gutter-compensation;
+  }
+
+  .row.reverse {
+    flex-direction: row-reverse;
+  }
+
+  .col.reverse {
+    flex-direction: column-reverse;
+  }
+
+  $name: xs;
+  .col-#{$name} {
+    @include _bon-fb-grid-col-common($half-gutter-width);
+    flex-basis: auto;
+  }
+  @for $i from 1 through $grid-columns {
+    .col-#{$name}-#{$i} {
+      @include _bon-fb-grid-col-common($half-gutter-width);
+      flex-basis: math.div(100%, $grid-columns) * $i;
+      max-width: math.div(100%, $grid-columns) * $i;
+    }
+  }
+  @for $i from 0 through $grid-columns {
+    .col-#{$name}-offset-#{$i} {
+      @include _bon-fb-grid-col-common($half-gutter-width);
+      @if $i == 0 {
+        margin-left: 0;
+      } @else {
+        margin-left: math.div(100%, $grid-columns) * $i;
+      }
+    }
+  }
+  .col-#{$name} {
+    flex-grow: 1;
+    flex-basis: 0;
+    max-width: 100%;
+  }
+  .start-#{$name} {
+    justify-content: flex-start;
+    text-align: left;
+  }
+
+  .center-#{$name} {
+    justify-content: center;
+    text-align: center;
+  }
+
+  .end-#{$name} {
+    justify-content: flex-end;
+    text-align: right;
+  }
+
+  .top-#{$name} {
+    align-self: flex-start;
+  }
+
+  .middle-#{$name} {
+    align-items: center;
+  }
+
+  .bottom-#{$name} {
+    align-items: flex-end;
+  }
+
+  .around-#{$name} {
+    justify-content: space-around;
+  }
+
+  .between-#{$name} {
+    justify-content: space-between;
+  }
+
+  .first-#{$name} {
+    order: -1;
+  }
+
+  .last-#{$name} {
+    order: 1;
+  }
+
+  @each $breakpoint in $breakpoints {
+    $name: list.nth($breakpoint, 1);
+    $size: list.nth($breakpoint, 2);
+    $container: list.nth($breakpoint, 3);
+    @media only screen and (min-width: $size) {
+      .container {
+        width: $container;
+      }
+
+      .col-#{$name} {
+        @include _bon-fb-grid-col-common($half-gutter-width);
+        flex-basis: auto;
+      }
+      @for $i from 1 through $grid-columns {
+        .col-#{$name}-#{$i} {
+          @include _bon-fb-grid-col-common($half-gutter-width);
+          flex-basis: math.div(100%, $grid-columns) * $i;
+          max-width: math.div(100%, $grid-columns) * $i;
+        }
+      }
+      @for $i from 0 through $grid-columns {
+        .col-#{$name}-offset-#{$i} {
+          @include _bon-fb-grid-col-common($half-gutter-width);
+          @if $i == 0 {
+            margin-left: 0;
+          } @else {
+            margin-left: math.div(100%, $grid-columns) * $i;
+          }
+        }
+      }
+      .col-#{$name} {
+        flex-grow: 1;
+        flex-basis: 0;
+        max-width: 100%;
+      }
+      .start-#{$name} {
+        justify-content: flex-start;
+        text-align: left;
+      }
+
+      .center-#{$name} {
+        justify-content: center;
+        text-align: center;
+      }
+
+      .end-#{$name} {
+        justify-content: flex-end;
+        text-align: right;
+      }
+
+      .top-#{$name} {
+        align-items: flex-start;
+      }
+
+      .middle-#{$name} {
+        align-items: center;
+      }
+
+      .bottom-#{$name} {
+        align-items: flex-end;
+      }
+
+      .around-#{$name} {
+        justify-content: space-around;
+      }
+
+      .between-#{$name} {
+        justify-content: space-between;
+      }
+
+      .first-#{$name} {
+        order: -1;
+      }
+
+      .last-#{$name} {
+        order: 1;
+      }
+    }
+  }
+}
