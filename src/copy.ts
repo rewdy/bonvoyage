@@ -1,7 +1,7 @@
-import fs from "fs";
+import fs from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 import Handlebars from "handlebars";
-import path from "path";
-import { fileURLToPath } from "url";
 
 export type BonVoyageConfig = {
   destination: string;

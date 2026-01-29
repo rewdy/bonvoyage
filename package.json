@@ -25,7 +25,7 @@
     "@biomejs/biome": "^2.3.12",
     "@types/bun": "latest",
     "@bomb.sh/args": "^0.3.1",
-    "@clack/prompts": "0.11.0",
+    "@clack/prompts": "1.0.0",
     "chalk": "^5.6.2",
     "handlebars": "^4.7.8"
   },

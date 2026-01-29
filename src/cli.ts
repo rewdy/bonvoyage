@@ -9,8 +9,8 @@ import {
   text,
 } from "@clack/prompts";
 import chalk from "chalk";
-import fs from "fs";
-import path from "path";
+import fs from "node:fs";
+import path from "node:path";
 import { COLOR_DEFAULTS, HEADER_WIDTH, TAB } from "./constants";
 import { copyLibrary } from "./copy";
 import {
