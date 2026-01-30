@@ -8,6 +8,7 @@ export type BonVoyageConfig = {
   primaryColor: string;
   secondaryColor: string;
   baseColor: string;
+  baseRatio?: number;
   extras: {
     type: boolean;
     spacing: boolean;
@@ -19,7 +20,7 @@ export type BonVoyageConfig = {
 /**
  * Function to copy the files from the source to the dest
  */
-export const copyLibrary = async (config: BonVoyageConfig) => {
+export const copyLibrary = async (config: BonVoyageConfig, dev = false) => {
   // Ensure directory exists and creates it if not
   if (!fs.existsSync(config.destination)) {
     fs.mkdirSync(config.destination, { recursive: true });
@@ -40,10 +41,11 @@ export const copyLibrary = async (config: BonVoyageConfig) => {
     const templateSource = fs.readFileSync(srcFilePath, "utf-8");
     const template = Handlebars.compile(templateSource, { noEscape: true });
 
-    const rendered = template({
+    let rendered = template({
       primaryColor: config.primaryColor,
       secondaryColor: config.secondaryColor,
       baseColor: config.baseColor,
+      baseRatio: config.baseRatio,
       extra: {
         type: config.extras.type,
         spacing: config.extras.spacing,
@@ -52,27 +54,41 @@ export const copyLibrary = async (config: BonVoyageConfig) => {
       },
     });
 
+    if (dev) {
+      const doNotEditHeading = `/*
+  * This file is auto-generated. Do not edit directly.
+  * To make changes, edit the templates in the "templates" directory.
+*/
+`;
+      rendered = doNotEditHeading + rendered;
+    }
+
     fs.writeFileSync(destFilePath, rendered, "utf-8");
   });
 };
 
 if (require.main === module) {
-  // If this is run directly, do a test run
+  // If this is run directly, we copy pasta to the dev harness with
+  // default vars. We use this for making the SASS right 💅.
   (async () => {
     console.log("Running test copy");
 
-    await copyLibrary({
-      destination: "./scss",
-      primaryColor: "#3498db",
-      secondaryColor: "#2ecc71",
-      baseColor: "#ecf0f1",
-      extras: {
-        type: true,
-        spacing: true,
-        flex: true,
-        grid: false,
+    await copyLibrary(
+      {
+        destination: "./showcase/scss",
+        primaryColor: "#3498db",
+        secondaryColor: "#2ecc71",
+        baseColor: "#ecf0f1",
+        baseRatio: 1.333,
+        extras: {
+          type: true,
+          spacing: true,
+          flex: true,
+          grid: false,
+        },
       },
-    });
+      true,
+    );
 
     console.log("Templates copied successfully!");
     process.exit(0);

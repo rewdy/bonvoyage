@@ -1,7 +1,9 @@
 @use "library" as lib with (
-  $base-ratio: 1.33,
   $accent-base: {{ primaryColor }},
   $secondary-base: {{ secondaryColor }},
+  {{#if baseRatio}}
+  $base-ratio: {{ baseRatio }},
+  {{/if}}
 );
 
 // Include base styles

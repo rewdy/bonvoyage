@@ -1,3 +1,7 @@
 {
-  "cSpell.words": ["bonvoyage", "flexbox"]
+  "cSpell.words": ["bonvoyage", "flexbox", "rsbuild"],
+  "editor.codeActionsOnSave": {
+    "source.sortImports": "never",
+    "source.fixAll.biome": "explicit"
+  }
 }

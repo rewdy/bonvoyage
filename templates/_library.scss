@@ -2,7 +2,9 @@
 @use "sass:color";
 @use "reset" as reset;
 @use "functions" as func;
+@use "utilities" as *;
 
+@forward "functions";
 @forward "utilities";
 
 // Golden Ratio Typography Library
@@ -218,6 +220,16 @@ $theme-dark: (
       )};
     --background-selection: #{map.get($theme-light, background-selection)};
 
+    --form-background-color: #{color.adjust(
+        map.get($theme-light, background-color),
+        $lightness: -5%
+      )};
+
+    --border-color: #{color.change(
+        map.get($theme-light, text-color-muted),
+        $lightness: 80%
+      )};
+
     // Dark mode colors
     @media (prefers-color-scheme: dark) {
       --text-color: #{map.get($theme-dark, text-color)};
@@ -244,6 +256,16 @@ $theme-dark: (
           $alpha: 0.08
         )};
       --background-selection: #{map.get($theme-dark, background-selection)};
+
+      --form-background-color: #{color.adjust(
+          map.get($theme-dark, background-color),
+          $lightness: -3%
+        )};
+
+      --border-color: #{color.change(
+          map.get($theme-light, text-color-muted),
+          $lightness: 40%
+        )};
     }
   }
 }
@@ -375,7 +397,10 @@ $theme-dark: (
 // ========================================
 
 @mixin bon-semantic {
-  p {
+  p,
+  .p {
+    font-size: var(--font-size-base);
+    line-height: var(--line-height-base);
     margin-bottom: var(--spacing-base);
   }
 
@@ -603,8 +628,8 @@ $theme-dark: (
 
   hr {
     border: none;
-    border-top: 1px solid var(--text-color-muted);
-    margin: var(--spacing-lg) 0;
+    border-top: 1px solid var(--border-color);
+    margin: var(--spacing-xl) 0;
   }
 }
 
@@ -620,6 +645,15 @@ $theme-dark: (
     border-radius: var(--border-radius-sm);
     background-color: var(--accent-color);
     color: var(--accent-inverse);
+    margin-right: calc(var(--spacing-xs) / 2);
+    margin-left: calc(var(--spacing-xs) / 2);
+
+    &:first-child {
+      margin-left: 0;
+    }
+    &:last-child {
+      margin-right: 0;
+    }
 
     &:hover {
       background-color: var(--accent-hover);
@@ -676,6 +710,8 @@ $theme-dark: (
     padding: var(--spacing-xs) var(--spacing-sm);
     border: 1px solid var(--text-color-muted);
     border-radius: var(--border-radius-sm);
+    background-color: var(--form-background-color);
+    color: var(--text-color);
   }
 
   input,
