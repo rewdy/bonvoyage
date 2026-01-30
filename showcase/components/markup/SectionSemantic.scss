@@ -1,0 +1,10 @@
+.d-flex.spread > * {
+  box-sizing: content-box;
+  width: calc(25% - var(--spacing-md));
+  @media only screen and (max-width: 768px) {
+    width: calc(50% - var(--spacing-md));
+  }
+  @media only screen and (max-width: 480px) {
+    width: 100%;
+  }
+}

@@ -1,35 +1,48 @@
 {
-  "name": "bonvoyage",
-  "version": "0.0.2",
-  "description": "Site starter",
-  "main": "index.js",
+  "name": "@rewdy/bon-voyage",
+  "module": "index.ts",
+  "type": "module",
+  "private": true,
+  "bin": {
+    "bonvoyage": "dist/cli.js",
+    "bon-voyage": "dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "templates"
+  ],
   "scripts": {
-    "serve": "grunt",
-    "watch": "grunt watch",
-    "html": "grunt html",
-    "css": "grunt css",
-    "build": "grunt build",
-    "postinstall": "node _scripts/postinstall.js",
-    "fresh-start": "node _scripts/clean.js"
+    "build": "bun build src/cli.ts --target=node --outdir=dist --sourcemap=inline",
+    "clean": "rm -rf dist scss styles",
+    "cli": "bun run src/cli.ts",
+    "dev": "run-p dev:scss dev:app",
+    "dev:app": "rsbuild dev --open",
+    "dev:scss": "bun chokidar './templates/*.scss' -c 'bun sass'",
+    "sass": "bun run src/copy.ts",
+    "format": "biome format . --write",
+    "format:check": "biome format . --check",
+    "check": "biome check .",
+    "check:fix": "biome check . --write",
+    "test": "bun test"
   },
   "devDependencies": {
-    "@lodder/grunt-postcss": "^3.1.1",
-    "autoprefixer": "^9.0.0",
-    "cssnano": "^5.0.17",
-    "dot-json": "^1.2.2",
-    "gitconfig": "^2.0.8",
-    "grunt": "^1.4.1",
-    "grunt-browser-sync": "^2.2.0",
-    "grunt-contrib-copy": "^1.0.0",
-    "grunt-contrib-watch": "^1.1.0",
-    "grunt-nunjucks-2-html": "^2.2.0",
-    "grunt-prettify": "^0.4.0",
-    "grunt-sass": "^3.1.0",
-    "inquirer": "^8.2.0",
-    "postcss": "^8.4.6",
-    "rimraf": "^3.0.2",
-    "sass": "^1.49.7"
+    "@biomejs/biome": "^2.3.12",
+    "@bomb.sh/args": "^0.3.1",
+    "@clack/prompts": "1.0.0",
+    "@rsbuild/core": "^1.7.1",
+    "@rsbuild/plugin-react": "^1.4.2",
+    "@rsbuild/plugin-sass": "^1.5.0",
+    "@types/bun": "latest",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "chalk": "^5.6.2",
+    "chokidar-cli": "^3.0.0",
+    "handlebars": "^4.7.8",
+    "npm-run-all2": "^8.0.4",
+    "react": "^19",
+    "react-dom": "^19",
+    "sass": "^1.97.3",
+    "typescript": "^5"
   },
-  "author": "Andrew Meyer",
-  "license": "ISC"
+  "dependencies": {}
 }

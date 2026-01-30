@@ -1,0 +1,25 @@
+@use "library" as lib with (
+  $accent-base: {{ primaryColor }},
+  $secondary-base: {{ secondaryColor }},
+  {{#if baseRatio}}
+  $base-ratio: {{ baseRatio }},
+  {{/if}}
+);
+
+// Include base styles
+{{#if extra.type}}
+@include lib.bon-lib;
+{{else}}
+@include lib.bon-base;
+{{/if}}
+
+// Include extra desired utilities
+{{#if extra.spacing}}
+@include lib.bon-spacing-utilities;
+{{/if}}
+{{#if extra.flex}}
+@include lib.bon-flex-utilities;
+{{/if}}
+{{#if extra.grid}}
+@include lib.bon-flexbox-grid;
+{{/if}}

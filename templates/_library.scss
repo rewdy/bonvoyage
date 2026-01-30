@@ -1,0 +1,784 @@
+@use "sass:map";
+@use "sass:color";
+@use "reset" as reset;
+@use "functions" as func;
+@use "utilities" as *;
+
+@forward "functions";
+@forward "utilities";
+
+// Golden Ratio Typography Library
+// Based on the golden ratio (φ ≈ 1.618) for harmonious proportions
+
+// ========================================
+// Configuration Variables
+// ========================================
+
+/// The ratio constant; defaults to golden
+/// @type Number
+$base-ratio: 1.618 !default;
+
+/// Base font size in pixels
+/// @type Number
+$base-font-size: 18px !default;
+
+/// Base line height multiplier
+/// @type Number
+$base-line-height: $base-ratio !default;
+
+/// Base spacing unit (used for margins, padding, etc.)
+/// @type Number
+$base-spacing: 1rem !default;
+
+// Typefaces and font weights
+$font-family-base: "Inter", sans-serif !default;
+$font-weight-normal: 400 !default;
+$font-weight-bold: 600 !default;
+
+$font-family-heading: $font-family-base !default;
+$font-weight-heading-bold: 700 !default;
+
+$font-family-monospace: "Andale Mono", monospace !default;
+
+$accent-base: #4548ee !default;
+$accent-inverse: func.contrast-color($accent-base) !default;
+$accent-hover: color.adjust($accent-base, $lightness: -10%) !default;
+
+$secondary-base: #b258d8 !default;
+$secondary-inverse: func.contrast-color($secondary-base) !default;
+$secondary-hover: color.adjust($secondary-base, $lightness: -10%) !default;
+
+/// Base accent color
+/// @type Color
+$theme-light: (
+  text-color: #000,
+  text-color-inverted: #fff,
+  text-color-muted: #666,
+  background-color: #fff,
+  accent-color: $accent-base,
+  accent-inverse: $accent-inverse,
+  accent-hover: $accent-hover,
+  secondary-color: $secondary-base,
+  secondary-inverse: $secondary-inverse,
+  secondary-hover: $secondary-hover,
+  color-info: #30a3c0,
+  color-success: #28a745,
+  color-danger: #c92535,
+  color-warning: rgba(255, 213, 0, 1),
+  color-highlight: rgba(255, 213, 0, 0.8),
+  background-selection: color.change($accent-base, $alpha: 0.3),
+) !default;
+
+$accent-dark: color.change($accent-base, $lightness: 65%) !default;
+$secondary-dark: color.change($secondary-base, $lightness: 65%) !default;
+
+$theme-dark: (
+  text-color: #ddd,
+  text-color-inverted: #111,
+  text-color-muted: #999,
+  background-color: #222,
+  accent-color: $accent-dark,
+  accent-inverse: $accent-inverse,
+  accent-hover: $accent-hover,
+  secondary-color: $secondary-dark,
+  secondary-inverse: $secondary-inverse,
+  secondary-hover: $secondary-hover,
+  color-info: #2689a2,
+  color-success: #28a745,
+  color-danger: #c92535,
+  color-warning: rgba(255, 213, 0, 1),
+  color-highlight: rgba(255, 213, 0, 0.8),
+  background-selection: color.change($accent-dark, $alpha: 0.3),
+) !default;
+
+// ========================================
+// CSS Custom Properties
+// ========================================
+
+// Setup CSS variables for typography scale based on golden ratio
+@mixin bon-css-vars {
+  :root {
+    // Ratio
+    --base-ratio: #{$base-ratio};
+    --font-base-size: #{$base-font-size};
+    --base-line-height: #{$base-line-height};
+    --base-spacing: #{$base-spacing};
+
+    // We clamp small font sizes to a minimum for readability. This also
+    // ends up _looking more right_ as well.
+    --minimum-font-size: 12px;
+
+    // ========================================
+    // Calculated Typography Scale
+    // ========================================
+
+    --font-size-xs: max(
+      var(--minimum-font-size),
+      calc(var(--font-base-size) / (var(--base-ratio) * var(--base-ratio)))
+    );
+    --font-size-sm: max(
+      var(--minimum-font-size),
+      calc(var(--font-base-size) / var(--base-ratio))
+    );
+    --font-size-base: var(--font-base-size);
+    --font-size-md: calc(var(--font-base-size) * var(--base-ratio));
+    --font-size-lg: calc(
+      var(--font-base-size) * (var(--base-ratio) * var(--base-ratio))
+    );
+    --font-size-xl: calc(
+      var(--font-base-size) *
+        (var(--base-ratio) * var(--base-ratio) * var(--base-ratio))
+    );
+    --font-size-xxl: calc(
+      var(--font-base-size) *
+        (
+          var(--base-ratio) * var(--base-ratio) * var(--base-ratio) *
+            var(--base-ratio)
+        )
+    );
+
+    // This is a deviation from the pure ratios
+    --font-size-code: max(
+      var(--minimum-font-size),
+      calc(var(--font-base-size) * 0.8)
+    );
+
+    // ========================================
+    // Spacing Scale (margins, padding, gaps)
+    // ========================================
+
+    --spacing-xs: calc(
+      var(--base-spacing) / (var(--base-ratio) * var(--base-ratio))
+    );
+    --spacing-sm: calc(var(--base-spacing) / var(--base-ratio));
+    --spacing-base: var(--base-spacing);
+    --spacing-md: calc(var(--base-spacing) * var(--base-ratio));
+    --spacing-lg: calc(
+      var(--base-spacing) * (var(--base-ratio) * var(--base-ratio))
+    );
+    --spacing-xl: calc(
+      var(--base-spacing) *
+        (var(--base-ratio) * var(--base-ratio) * var(--base-ratio))
+    );
+    --spacing-xxl: calc(
+      var(--base-spacing) *
+        (
+          var(--base-ratio) * var(--base-ratio) * var(--base-ratio) *
+            var(--base-ratio)
+        )
+    );
+
+    --border-radius-sm: calc(var(--spacing-xs) / 2);
+    --border-radius-base: calc(var(--spacing-sm) / 2);
+    --border-radius-lg: calc(var(--spacing-md) / 2);
+
+    // ========================================
+    // Line Height Scale
+    // ========================================
+
+    --line-height-tight: 1;
+    --line-height-base: var(--base-ratio);
+    --line-height-loose: calc(var(--base-ratio) * var(--base-ratio));
+
+    // ========================================
+    // Color and Font Defaults
+    // ========================================
+
+    // Default text
+    --font-family: #{$font-family-base};
+    --font-weight-normal: #{$font-weight-normal};
+    --font-weight-bold: #{$font-weight-bold};
+
+    --font-family-heading: #{$font-family-heading};
+    --font-weight-heading-bold: #{$font-weight-heading-bold};
+
+    --font-family-monospace: #{$font-family-monospace};
+
+    // Largely "dumb" colors. You should override these per your project's needs.
+    --text-color: #{map.get($theme-light, text-color)};
+    --text-color-inverted: #{map.get($theme-light, text-color-inverted)};
+    --text-color-muted: #{map.get($theme-light, text-color-muted)};
+
+    --accent-color: #{map.get($theme-light, accent-color)};
+    --accent-inverse: #{map.get($theme-light, accent-inverse)};
+    --accent-hover: #{map.get($theme-light, accent-hover)};
+
+    --secondary-color: #{map.get($theme-light, secondary-color)};
+    --secondary-inverse: #{map.get($theme-light, secondary-inverse)};
+    --secondary-hover: #{map.get($theme-light, secondary-hover)};
+
+    --color-success: #{map.get($theme-light, color-success)};
+    --color-danger: #{map.get($theme-light, color-danger)};
+    --color-warning: #{map.get($theme-light, color-warning)};
+    --color-info: #{map.get($theme-light, color-info)};
+
+    --background-color: #{map.get($theme-light, background-color)};
+    --background-highlight: #{map.get($theme-light, color-highlight)};
+    --background-screen: #{color.change(
+        map.get($theme-light, text-color),
+        $alpha: 0.08
+      )};
+    --background-selection: #{map.get($theme-light, background-selection)};
+
+    --form-background-color: #{color.adjust(
+        map.get($theme-light, background-color),
+        $lightness: -5%
+      )};
+
+    --border-color: #{color.change(
+        map.get($theme-light, text-color-muted),
+        $lightness: 80%
+      )};
+
+    // Dark mode colors
+    @media (prefers-color-scheme: dark) {
+      --text-color: #{map.get($theme-dark, text-color)};
+      --text-color-inverted: #{map.get($theme-dark, text-color-inverted)};
+      --text-color-muted: #{map.get($theme-dark, text-color-muted)};
+
+      --accent-color: #{map.get($theme-dark, accent-color)};
+      --accent-inverse: #{map.get($theme-dark, accent-inverse)};
+      --accent-hover: #{map.get($theme-dark, accent-hover)};
+
+      --secondary-color: #{map.get($theme-dark, secondary-color)};
+      --secondary-inverse: #{map.get($theme-dark, secondary-inverse)};
+      --secondary-hover: #{map.get($theme-dark, secondary-hover)};
+
+      --color-success: #{map.get($theme-dark, color-success)};
+      --color-danger: #{map.get($theme-dark, color-danger)};
+      --color-warning: #{map.get($theme-dark, color-warning)};
+      --color-info: #{map.get($theme-dark, color-info)};
+
+      --background-color: #{map.get($theme-dark, background-color)};
+      --background-highlight: #{map.get($theme-dark, color-highlight)};
+      --background-screen: #{color.change(
+          map.get($theme-dark, text-color),
+          $alpha: 0.08
+        )};
+      --background-selection: #{map.get($theme-dark, background-selection)};
+
+      --form-background-color: #{color.adjust(
+          map.get($theme-dark, background-color),
+          $lightness: -3%
+        )};
+
+      --border-color: #{color.change(
+          map.get($theme-light, text-color-muted),
+          $lightness: 40%
+        )};
+    }
+  }
+}
+
+// ========================================
+// Base Typography Styles
+// ========================================
+
+/// Apply base typography styles to html/body
+@mixin bon-base {
+  @include bon-css-vars;
+
+  @include reset.reset-base;
+  @include reset.reset-box-model;
+
+  html {
+    font-size: $base-font-size;
+    line-height: var(--line-height-base);
+  }
+
+  body {
+    font-size: var(--font-size-base);
+    line-height: var(--line-height-base);
+    margin: 0;
+    padding: 0;
+    color: var(--text-color);
+    background-color: var(--background-color);
+    font-family: var(--font-family);
+    font-weight: var(--font-weight-normal);
+  }
+
+  a {
+    color: var(--accent-color);
+    text-decoration: underline;
+
+    &:hover,
+    &:focus {
+      color: var(--text-color);
+    }
+
+    &:visited {
+      color: var(--text-color-muted);
+    }
+  }
+
+  ::selection {
+    background-color: var(--background-selection);
+    color: contrasting-text(var(--background-selection));
+  }
+}
+
+// ========================================
+// Heading Styles
+// ========================================
+
+@mixin bon-headings {
+  %heading-base {
+    font-family: var(--font-family-heading);
+    font-weight: var(--font-weight-heading-bold);
+
+    a {
+      color: inherit;
+      text-decoration: none;
+
+      &:hover,
+      &:focus {
+        text-decoration: underline;
+      }
+    }
+  }
+
+  h1,
+  .h1 {
+    @extend %heading-base;
+    font-size: var(--font-size-xxl);
+    line-height: var(--line-height-tight);
+    margin-top: var(--spacing-xl);
+    margin-bottom: var(--spacing-md);
+  }
+
+  h2,
+  .h2 {
+    @extend %heading-base;
+    font-size: var(--font-size-xl);
+    line-height: var(--line-height-tight);
+    margin-top: var(--spacing-lg);
+    margin-bottom: var(--spacing-md);
+  }
+
+  h3,
+  .h3 {
+    @extend %heading-base;
+    font-size: var(--font-size-lg);
+    line-height: var(--line-height-base);
+    margin-top: var(--spacing-md);
+    margin-bottom: var(--spacing-sm);
+  }
+
+  h4,
+  .h4 {
+    @extend %heading-base;
+    font-size: var(--font-size-md);
+    line-height: var(--line-height-base);
+    margin-top: var(--spacing-md);
+    margin-bottom: var(--spacing-sm);
+  }
+
+  h5,
+  .h5 {
+    @extend %heading-base;
+    font-size: var(--font-size-base);
+    line-height: var(--line-height-base);
+    margin-top: var(--spacing-base);
+    margin-bottom: var(--spacing-xs);
+  }
+
+  h6,
+  .h6 {
+    @extend %heading-base;
+    font-size: var(--font-size-sm);
+    line-height: var(--line-height-base);
+    margin-top: var(--spacing-base);
+    margin-bottom: var(--spacing-xs);
+  }
+}
+
+// ========================================
+// Body Text Styles
+// ========================================
+
+@mixin bon-semantic {
+  p,
+  .p {
+    font-size: var(--font-size-base);
+    line-height: var(--line-height-base);
+    margin-bottom: var(--spacing-base);
+  }
+
+  p:last-child {
+    margin-bottom: 0;
+  }
+
+  small {
+    font-size: var(--font-size-sm);
+    line-height: var(--line-height-base);
+  }
+
+  blockquote {
+    font-size: var(--font-size-base);
+    line-height: var(--line-height-base);
+    margin: var(--spacing-md) 0;
+    padding: var(--spacing-base) var(--spacing-md);
+    border-left: var(--spacing-xs) solid var(--background-screen);
+    font-style: italic;
+  }
+
+  cite {
+    color: var(--text-color-muted);
+    font-size: var(--font-size-base);
+    line-height: var(--line-height-base);
+  }
+
+  code {
+    font-size: var(--font-size-code); // this ends up looking more right
+    line-height: calc(var(--line-height-base) * 1rem);
+    padding: calc(var(--spacing-xs) / 2) var(--spacing-xs);
+    background-color: var(--background-screen);
+    border-radius: var(--border-radius-base);
+    font-family: var(--font-family-monospace);
+    vertical-align: baseline;
+  }
+
+  mark {
+    background-color: var(--background-highlight);
+    padding: calc(var(--spacing-xs) / 4) var(--spacing-xs);
+    border-radius: calc(var(--spacing-xs) / 2);
+  }
+
+  kbd {
+    font-size: var(--font-size-code);
+    line-height: calc(var(--line-height-base) * 1rem);
+    padding: calc(var(--spacing-xs) / 2) var(--spacing-xs);
+    background-color: var(--background-screen);
+    border-radius: var(--border-radius-sm);
+    font-family: var(--font-family-monospace);
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.2);
+  }
+
+  s,
+  del {
+    text-decoration: line-through 2px;
+  }
+
+  u,
+  ins {
+    text-decoration: underline 2px;
+  }
+
+  ins {
+    color: var(--color-success);
+  }
+
+  del {
+    color: var(--color-danger);
+  }
+
+  abbr {
+    text-decoration: none;
+    border-bottom: 1px dotted var(--text-color-muted);
+  }
+
+  address {
+    font-size: var(--font-size-sm);
+    line-height: var(--line-height-base);
+    margin: 0 0 var(--spacing-base) 0;
+  }
+
+  pre {
+    font-size: var(--font-size-code);
+    line-height: var(--line-height-base);
+    margin: var(--spacing-base) 0;
+    padding: var(--spacing-sm);
+    background-color: var(--background-screen);
+    border-radius: var(--border-radius-sm);
+    overflow-x: auto;
+
+    code {
+      padding: 0;
+      background-color: transparent;
+    }
+  }
+
+  ul,
+  ol {
+    margin-bottom: var(--spacing-lg);
+    padding-left: var(--spacing-md);
+    line-height: var(--line-height-base);
+  }
+
+  li {
+    line-height: var(--line-height-base);
+  }
+
+  ul ul,
+  ol ol,
+  ul ol,
+  ol ul {
+    margin-top: var(--spacing-xs);
+    margin-bottom: var(--spacing-xs);
+  }
+
+  ul li {
+    list-style-type: square;
+  }
+
+  ul ul li {
+    list-style-type: circle;
+  }
+
+  ul ul ul li {
+    list-style-type: disc;
+  }
+
+  dl {
+    margin-bottom: var(--spacing-base);
+
+    dl {
+      margin-top: var(--spacing-md);
+      margin-left: var(--spacing-md);
+    }
+  }
+
+  dt {
+    font-weight: var(--font-weight-bold);
+  }
+
+  dd {
+    margin: 0 0 0 var(--spacing-md);
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: var(--spacing-base);
+
+    caption {
+      font-size: var(--font-size-sm);
+      margin-bottom: var(--spacing-sm);
+      text-align: center;
+      color: var(--text-color-muted);
+    }
+
+    th,
+    td {
+      text-align: left;
+      padding: var(--spacing-xs) var(--spacing-sm);
+    }
+
+    thead {
+      th {
+        border-bottom: 2px solid var(--text-color-muted);
+      }
+    }
+
+    tfoot {
+      th,
+      td {
+        border-top: 2px solid var(--text-color-muted);
+      }
+    }
+
+    &.inline {
+      width: auto;
+    }
+
+    &.lined {
+      tbody {
+        th,
+        td {
+          border-bottom: 1px solid var(--text-color-muted);
+        }
+      }
+    }
+
+    &.striped {
+      tbody {
+        tr:nth-child(odd) {
+          background-color: var(--background-screen);
+        }
+      }
+    }
+
+    &.hover {
+      tbody {
+        tr:hover {
+          background-color: var(--background-highlight);
+        }
+      }
+    }
+  }
+
+  details {
+    margin: var(--spacing-base) 0;
+    padding: var(--spacing-sm);
+    border: 1px solid var(--text-color-muted);
+    border-radius: var(--border-radius-sm);
+
+    summary {
+      cursor: pointer;
+      font-weight: var(--font-weight-bold);
+    }
+
+    &:open {
+      summary {
+        margin-bottom: var(--spacing-sm);
+      }
+    }
+  }
+
+  hr {
+    border: none;
+    border-top: 1px solid var(--border-color);
+    margin: var(--spacing-xl) 0;
+  }
+}
+
+@mixin bon-buttons {
+  %button-base {
+    cursor: pointer;
+    font-size: var(--font-size-base);
+    font-family: var(--font-family);
+    font-weight: var(--font-weight-normal);
+    line-height: var(--line-height-base);
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border: 0;
+    border-radius: var(--border-radius-sm);
+    background-color: var(--accent-color);
+    color: var(--accent-inverse);
+    margin-right: calc(var(--spacing-xs) / 2);
+    margin-left: calc(var(--spacing-xs) / 2);
+
+    &:first-child {
+      margin-left: 0;
+    }
+    &:last-child {
+      margin-right: 0;
+    }
+
+    &:hover {
+      background-color: var(--accent-hover);
+    }
+
+    &[disabled] {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+
+  button,
+  input[type="submit"],
+  input[type="button"],
+  input[type="reset"] {
+    @extend %button-base;
+  }
+
+  button[type="submit"],
+  input[type="submit"] {
+    font-weight: var(--font-weight-bold);
+  }
+
+  a.button,
+  a.btn,
+  a[role="button"] {
+    @extend %button-base;
+
+    display: inline-block;
+    text-decoration: none;
+  }
+}
+
+// ========================================
+// Forms
+// ========================================
+@mixin bon-form {
+  @include bon-buttons;
+
+  fieldset {
+    margin: var(--spacing-base) 0;
+    padding: var(--spacing-sm);
+    border: 1px solid var(--text-color-muted);
+    border-radius: var(--border-radius-sm);
+
+    legend {
+      font-weight: var(--font-weight-bold);
+    }
+  }
+
+  %input-base {
+    font-size: var(--font-size-base);
+    line-height: var(--line-height-tight);
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border: 1px solid var(--text-color-muted);
+    border-radius: var(--border-radius-sm);
+    background-color: var(--form-background-color);
+    color: var(--text-color);
+  }
+
+  input,
+  textarea,
+  select {
+    @extend %input-base;
+  }
+
+  label[for] {
+    display: block;
+    margin-top: var(--spacing-sm);
+    margin-bottom: 0;
+  }
+
+  label:not([for]) {
+    cursor: pointer;
+  }
+
+  input:not([type]),
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="search"],
+  input[type="tel"],
+  input[type="url"],
+  input[type="number"],
+  input[type="date"],
+  input[type="time"],
+  input[type="datetime"],
+  input[type="datetime-local"],
+  input[type="color"],
+  input[type="file"] {
+    width: 100%;
+    max-width: 25rem;
+  }
+
+  select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M7 10l5 5 5-5z'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right var(--spacing-xs) center;
+    background-size: var(--spacing-base) var(--spacing-base);
+    padding-right: var(--spacing-md);
+  }
+
+  textarea:not([cols]) {
+    width: 100%;
+    display: block;
+  }
+}
+
+// ========================================
+// Master Mixin - Apply All Styles
+// ========================================
+
+/// Apply all golden ratio typography styles at once
+@mixin bon-lib {
+  @include bon-base;
+  @include bon-headings;
+  @include bon-semantic;
+  @include bon-form;
+  @include bon-utilities;
+}
+
+@mixin bon-utilities {
+  @include bon-spacing-utilities;
+  @include bon-flex-utilities;
+}

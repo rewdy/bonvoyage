@@ -1,0 +1,54 @@
+@use "sass:color";
+@use "sass:math";
+
+/// More accurate contrast function using WCAG relative luminance calculation
+/// This provides better results than simple lightness comparison
+///
+/// @param {Color} $color - The background color to contrast against
+/// @return {Color} - Either #000000 (black) or #ffffff (white)
+///
+/// @example scss
+///   .card {
+///     background-color: #f39c12;
+///     color: contrast-color(#f39c12); // Returns black
+///   }
+///
+@function contrast-color($color) {
+  // Get RGB channels (0-255 range)
+  $r: color.channel($color, "red", $space: rgb);
+  $g: color.channel($color, "green", $space: rgb);
+  $b: color.channel($color, "blue", $space: rgb);
+
+  // Convert to 0-1 range
+  $r: math.div($r, 255);
+  $g: math.div($g, 255);
+  $b: math.div($b, 255);
+
+  // Apply gamma correction
+  $r: if(
+    $r <=0.03928,
+    math.div($r, 12.92),
+    math.pow(math.div($r + 0.055, 1.055), 2.4)
+  );
+  $g: if(
+    $g <=0.03928,
+    math.div($g, 12.92),
+    math.pow(math.div($g + 0.055, 1.055), 2.4)
+  );
+  $b: if(
+    $b <=0.03928,
+    math.div($b, 12.92),
+    math.pow(math.div($b + 0.055, 1.055), 2.4)
+  );
+
+  // Calculate relative luminance
+  $luminance: 0.2126 * $r + 0.7152 * $g + 0.0722 * $b;
+
+  // WCAG recommends a threshold of 0.179 for relative luminance
+  // Colors with luminance > 0.179 get black text, otherwise white
+  @if $luminance >0.179 {
+    @return #000000;
+  } @else {
+    @return #ffffff;
+  }
+}
