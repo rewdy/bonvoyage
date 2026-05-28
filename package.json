@@ -26,7 +26,7 @@
     "grunt-prettify": "^0.4.0",
     "grunt-sass": "^3.1.0",
     "inquirer": "^8.2.0",
-    "postcss": "^8.4.6",
+    "postcss": "^8.5.10",
     "rimraf": "^3.0.2",
     "sass": "^1.49.7"
   },
